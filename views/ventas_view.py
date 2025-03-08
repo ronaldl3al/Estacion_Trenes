@@ -5,12 +5,12 @@ from datetime import datetime
 import models.estacion as modelo_estacion 
 from utils.helpers import mostrar_mensaje, toggle_theme
 
-def build_schedule_view(horarios):
-    pastel_colors = ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
-    schedule_items = []
+def construir_horarios(horarios):
+    colores_pastel = ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
+    elementos_horarios = []
     for i, horario in enumerate(horarios):
-        color = pastel_colors[i % len(pastel_colors)]
-        schedule_items.append(
+        color = colores_pastel[i % len(colores_pastel)]
+        elementos_horarios.append(
             ft.Container(
                 content=ft.Text(horario, color="black"),
                 bgcolor=color,
@@ -19,28 +19,27 @@ def build_schedule_view(horarios):
                 margin=ft.Margin(left=0, top=0, right=5, bottom=0)
             )
         )
-    return ft.Row(schedule_items, wrap=True)
-
+    return ft.Row(elementos_horarios, wrap=True)
 
 def vista_ventas(page):
-    estacion = modelo_estacion.usuario_actual  # usuario actual del módulo
+    estacion = modelo_estacion.usuario_actual  # Usuario actual del módulo
     if estacion is None:
         mostrar_mensaje(page, "Error: usuario no autenticado", tipo="error")
         page.go("/login")
         return
 
-    tickets_vendidos = 0
+    boletos_vendidos = 0
 
     def actualizar_hora_fecha():
         while True:
-            hora_actual.value = datetime.now().strftime("%H:%M:%S")
-            fecha_actual.value = datetime.now().strftime("%d/%m/%Y")
+            texto_hora.value = datetime.now().strftime("%H:%M:%S")
+            texto_fecha.value = datetime.now().strftime("%d/%m/%Y")
             page.update()
             time.sleep(1)
     
-    hora_actual = ft.Text("00:00:00")
-    fecha_actual = ft.Text("00/00/0000")
-    contador_tickets = ft.Text(f"Tickets vendidos: {tickets_vendidos}")
+    texto_hora = ft.Text("00:00:00")
+    texto_fecha = ft.Text("00/00/0000")
+    texto_boletos = ft.Text(f"Boletos vendidos: {boletos_vendidos}")
     
     threading.Thread(target=actualizar_hora_fecha, daemon=True).start()
     
@@ -54,7 +53,7 @@ def vista_ventas(page):
             ft.Divider(color="#4511ED"),
             ft.Text(estacion.nombre, size=16, color=ft.colors.WHITE),
             ft.Text("Horarios:", size=14, color=ft.colors.GREY_400),
-            build_schedule_view(estacion.horarios),
+            construir_horarios(estacion.horarios),
             ft.Divider(color="#4511ED"),
             ft.ElevatedButton(
                 "Generar PDF",
@@ -64,15 +63,15 @@ def vista_ventas(page):
                 on_click=lambda e: mostrar_mensaje(page, "PDF generado", tipo="pdf")
             ),
             ft.ElevatedButton(
-                        "Gestionar Horarios",
-                        icon=ft.icons.SCHEDULE,
-                        bgcolor="#4511ED",
-                        color="white",
-                        on_click=lambda e: page.go("/horarios")
-                    ),
-            hora_actual,
-            fecha_actual,
-            contador_tickets,
+                "Gestionar Horarios",
+                icon=ft.icons.SCHEDULE,
+                bgcolor="#4511ED",
+                color="white",
+                on_click=lambda e: page.go("/horarios")
+            ),
+            texto_hora,
+            texto_fecha,
+            texto_boletos,
             ft.IconButton(
                 icon=ft.icons.LOGOUT,
                 icon_color=ft.colors.RED_400,
@@ -95,33 +94,63 @@ def vista_ventas(page):
         options=[ft.dropdown.Option(h) for h in estacion.horarios]
     )
     
-    cantidad = ft.TextField(label="Cantidad", keyboard_type=ft.KeyboardType.NUMBER)
-    tipo = ft.RadioGroup(
-        content=ft.Row([
-            ft.Radio(value="Adulto", label="Adulto"),
-            ft.Radio(value="Nino", label="Niño (50% descuento)")
-        ])
+    # Campos de cantidad reducidos y en la misma línea para adultos, niños y adultos mayores
+    cantidad_adultos = ft.TextField(label="Adultos", keyboard_type=ft.KeyboardType.NUMBER, value="0", width=100)
+    cantidad_niños = ft.TextField(label="Niños", keyboard_type=ft.KeyboardType.NUMBER, value="0", width=100)
+    cantidad_adultos_mayores = ft.TextField(label="Adultos Mayores", keyboard_type=ft.KeyboardType.NUMBER, value="0", width=100)
+    
+    # Se muestran los precios de cada uno junto a los campos
+    fila_precios = ft.Row(
+        [
+            ft.Column(
+                [
+                    cantidad_adultos,
+                    ft.Text(f"Precio Adulto: ${estacion.precio:.2f}", size=12)
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
+            ft.Column(
+                [
+                    cantidad_niños,
+                    ft.Text(f"Precio Niño: ${(estacion.precio * 0.5):.2f}", size=12)
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
+            ft.Column(
+                [
+                    cantidad_adultos_mayores,
+                    ft.Text(f"Precio Adulto Mayor: ${(estacion.precio * 0.4):.2f}", size=12)
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            )
+        ],
+        spacing=20
     )
     
     total = ft.Text("Total: $0.00", size=20, weight=ft.FontWeight.BOLD)
     
     def calcular_total(e):
         try:
-            precio = estacion.precio * (0.5 if tipo.value == "Nino" else 1)
-            total.value = f"Total: ${float(cantidad.value) * precio:.2f}"
+            num_adultos = float(cantidad_adultos.value) if cantidad_adultos.value else 0
+            num_niños = float(cantidad_niños.value) if cantidad_niños.value else 0
+            num_adultos_mayores = float(cantidad_adultos_mayores.value) if cantidad_adultos_mayores.value else 0
+            total_valor = (num_adultos * estacion.precio) + \
+                          (num_niños * estacion.precio * 0.5) + \
+                          (num_adultos_mayores * estacion.precio * 0.4)
+            total.value = f"Total: ${total_valor:.2f}"
             page.update()
-        except:
-            pass
+        except Exception as ex:
+            print(ex)
     
-    cantidad.on_change = calcular_total
-    tipo.on_change = calcular_total
+    cantidad_adultos.on_change = calcular_total
+    cantidad_niños.on_change = calcular_total
+    cantidad_adultos_mayores.on_change = calcular_total
     
     contenido_ventas = ft.Column(
         [
             ft.Text("Venta de Boletos", size=24),
             ft.Row([destino, horario], spacing=20),
-            cantidad,
-            tipo,
+            fila_precios,
             total,
             ft.ElevatedButton(
                 "Generar Boleto",
@@ -134,14 +163,24 @@ def vista_ventas(page):
     )
     
     def vender_boleto():
-        nonlocal tickets_vendidos
+        nonlocal boletos_vendidos
         try:
-            if not all([destino.value, horario.value, cantidad.value, tipo.value]):
+            if not all([destino.value, horario.value]) or (cantidad_adultos.value == "" and 
+                                                            cantidad_niños.value == "" and 
+                                                            cantidad_adultos_mayores.value == ""):
                 raise Exception("Complete todos los campos")
             
-            tickets_vendidos += int(cantidad.value)
-            contador_tickets.value = f"Tickets vendidos: {tickets_vendidos}"
-            mostrar_mensaje(page, f"{cantidad.value} boleto(s) vendido(s)!", tipo="success")
+            num_adultos = int(cantidad_adultos.value) if cantidad_adultos.value else 0
+            num_niños = int(cantidad_niños.value) if cantidad_niños.value else 0
+            num_adultos_mayores = int(cantidad_adultos_mayores.value) if cantidad_adultos_mayores.value else 0
+            
+            total_boletos = num_adultos + num_niños + num_adultos_mayores
+            if total_boletos == 0:
+                raise Exception("La cantidad de boletos no puede ser 0")
+            
+            boletos_vendidos += total_boletos
+            texto_boletos.value = f"Boletos vendidos: {boletos_vendidos}"
+            mostrar_mensaje(page, f"{total_boletos} boleto(s) vendido(s)!", tipo="success")
             page.update()
         except Exception as ex:
             mostrar_mensaje(page, f"Error: {str(ex)}", tipo="error")

@@ -24,7 +24,7 @@ def mostrar_mensaje(page, mensaje, tipo="info"):
     page.update()
 
 def toggle_theme(page):
-    """Alterna entre modo claro y oscuro."""
+    #modo claro y oscuro
     page.theme_mode = ft.ThemeMode.DARK if page.theme_mode == ft.ThemeMode.LIGHT else ft.ThemeMode.LIGHT
     page.update()
 
