@@ -1,5 +1,3 @@
-#login_view.py
-
 import flet as ft
 import models.estacion as modelo_estacion 
 from utils.helpers import mostrar_mensaje
@@ -9,10 +7,22 @@ def vista_login(page):
     page.theme_mode = ft.ThemeMode.DARK
 
     def validar_ingreso(e):
+        # Primero, verificar si las credenciales corresponden al admin
+        if (campo_usuario.value.lower() == modelo_estacion.admin_credentials["operador"].lower() and 
+            campo_contrasena.value == modelo_estacion.admin_credentials["contrasena"]):
+            # Creamos un objeto simple para representar al admin
+            admin = type("Admin", (), {})()
+            admin.operador = modelo_estacion.admin_credentials["operador"]
+            admin.contrasena = modelo_estacion.admin_credentials["contrasena"]
+            modelo_estacion.usuario_actual = admin
+            page.go("/panel")
+            return
+
+        # Verificar las credenciales de las estaciones (operadores)
         for est in modelo_estacion.estaciones:
             if campo_usuario.value == est.operador and campo_contrasena.value == est.contrasena:
                 modelo_estacion.usuario_actual = est 
-                page.go("/ventas" if est.operador != "admin" else "/panel")
+                page.go("/ventas")
                 return
         mostrar_mensaje(page, "Credenciales incorrectas", tipo="error")
 
@@ -50,7 +60,7 @@ def vista_login(page):
 
     campo_contrasena = ft.TextField(
         label="Contraseña",
-        label_style=ft.TextStyle(color="#F4F9FA",size=20),
+        label_style=ft.TextStyle(color="#F4F9FA", size=20),
         text_style=ft.TextStyle(color=ft.colors.WHITE),  
         password=True,
         filled=True,
@@ -69,12 +79,10 @@ def vista_login(page):
     # Botón para iniciar sesión
     # ----------------------------------------------------------------
     login_btn = ft.ElevatedButton(
-        
         text="INICIAR",
         on_click=validar_ingreso,
         bgcolor="#A7107F",
         color=ft.colors.WHITE,
-        
     )
 
     # ----------------------------------------------------------------

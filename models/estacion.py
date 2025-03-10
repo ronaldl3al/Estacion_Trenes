@@ -10,12 +10,15 @@ class Estacion:
         self.boletos_vendidos = 0
         self.ventas = []
 
-# Lista global de estaciones
+admin_credentials = {
+    "operador": "admin",
+    "contrasena": "123"
+}
+
 estaciones = [
-    Estacion("admin", "123", "Concordia", ["08:00", "12:00", "16:00"], 1.0),
     Estacion("operador1", "123", "Centro", ["09:00", "13:00", "17:00"], 1.0),
-    Estacion("operador2", "123", "Barrio Obrero", ["10:00", "14:00", "18:00"], 1.0)
+    Estacion("operador2", "123", "Barrio Obrero", ["10:00", "14:00", "18:00"], 1.0),
+    Estacion("operador3", "123", "Barrio 1", ["10:00", "14:00", "18:00"], 1.0)
 ]
 
-# Variable global para el usuario actual
 usuario_actual = None

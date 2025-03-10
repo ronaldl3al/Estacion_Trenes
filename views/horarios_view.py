@@ -108,7 +108,7 @@ def vista_horarios(page):
                 )
             ],
             expand=True,
-            vertical_alignment=ft.CrossAxisAlignment.START  # Alinea los elementos al inicio verticalmente
+            vertical_alignment=ft.CrossAxisAlignment.START 
         )
     )
 
