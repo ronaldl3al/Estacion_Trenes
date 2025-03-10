@@ -42,8 +42,9 @@ def vista_ventas(page):
     texto_boletos = ft.Text(f"Boletos vendidos: {boletos_vendidos}")
 
     threading.Thread(target=actualizar_hora_fecha, daemon=True).start()
+    
     sidebar = ft.Container(
-        margin=ft.Margin(left=30, top=0, right=0, bottom=0),
+        margin=ft.Margin(left=0, top=0, right=0, bottom=0),
         content=ft.Column(
             [
                 ft.Text(estacion.nombre, size=24, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
@@ -70,8 +71,6 @@ def vista_ventas(page):
                     color=ft.colors.WHITE,
                     on_click=lambda e: page.go("/horarios")
                 ),
-                texto_hora,
-                texto_fecha,
                 texto_boletos
             ],
             spacing=15,
@@ -88,10 +87,10 @@ def vista_ventas(page):
             left=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
             top=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
             right=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
-            bottom=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
+            bottom=ft.BorderSide(color=ft.colors.WHITE12, width=1.5)
         )
     )
-
+    
     destino = ft.Dropdown(
         label="Destino",
         label_style=ft.TextStyle(color="#F4F9FA", size=20),
@@ -118,43 +117,43 @@ def vista_ventas(page):
     )
 
     cantidad_adultos = ft.TextField(
-    label="Adultos",
-    label_style=ft.TextStyle(color="#F4F9FA", size=20),
-    text_style=ft.TextStyle(color=ft.colors.WHITE),
-    filled=True,
-    border_color="#F4F9FA",
-    bgcolor=ft.colors.TRANSPARENT,
-    width=100,
-    height=50,
-    border_radius=7,
-    keyboard_type=ft.KeyboardType.NUMBER,
-    value="0"
+        label="Adultos",
+        label_style=ft.TextStyle(color="#F4F9FA", size=20),
+        text_style=ft.TextStyle(color=ft.colors.WHITE),
+        filled=True,
+        border_color="#F4F9FA",
+        bgcolor=ft.colors.TRANSPARENT,
+        width=100,
+        height=50,
+        border_radius=7,
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value="0"
     )
     cantidad_niños = ft.TextField(
-    label="Niños",
-    label_style=ft.TextStyle(color="#F4F9FA", size=20),
-    text_style=ft.TextStyle(color=ft.colors.WHITE),
-    filled=True,
-    border_color="#F4F9FA",
-    bgcolor=ft.colors.TRANSPARENT,
-    width=100,
-    height=50,
-    border_radius=7,
-    keyboard_type=ft.KeyboardType.NUMBER,
-    value="0"
+        label="Niños",
+        label_style=ft.TextStyle(color="#F4F9FA", size=20),
+        text_style=ft.TextStyle(color=ft.colors.WHITE),
+        filled=True,
+        border_color="#F4F9FA",
+        bgcolor=ft.colors.TRANSPARENT,
+        width=100,
+        height=50,
+        border_radius=7,
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value="0"
     )
     cantidad_adultos_mayores = ft.TextField(
-    label="Adultos Mayores",
-    label_style=ft.TextStyle(color="#F4F9FA", size=20),
-    text_style=ft.TextStyle(color=ft.colors.WHITE),
-    filled=True,
-    border_color="#F4F9FA",
-    bgcolor=ft.colors.TRANSPARENT,
-    width=100,
-    height=50,
-    border_radius=7,
-    keyboard_type=ft.KeyboardType.NUMBER,
-    value="0"
+        label="Adultos Mayores",
+        label_style=ft.TextStyle(color="#F4F9FA", size=20),
+        text_style=ft.TextStyle(color=ft.colors.WHITE),
+        filled=True,
+        border_color="#F4F9FA",
+        bgcolor=ft.colors.TRANSPARENT,
+        width=100,
+        height=50,
+        border_radius=7,
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value="0"
     )
 
     fila_precios = ft.Row(
@@ -213,7 +212,26 @@ def vista_ventas(page):
     cantidad_adultos.on_change = calcular_total
     cantidad_niños.on_change = calcular_total
     cantidad_adultos_mayores.on_change = calcular_total
-
+    reloj_container = ft.Container(
+        content=ft.Row(
+            [texto_hora, texto_fecha],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10
+        ),
+        padding=30,
+        margin=ft.Margin(top=0, left=0, right=0, bottom=0),  
+        width=800,
+        height=155,
+        border_radius=16,
+        alignment=ft.alignment.center,
+        blur=ft.Blur(sigma_x=15, sigma_y=15),
+        border=ft.Border(
+            left=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
+            top=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
+            right=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
+            bottom=ft.BorderSide(color=ft.colors.WHITE12, width=1.5)
+        )
+    )
     contenido_ventas = ft.Column(
         [
             ft.Text("Venta de Boletos", size=24),
@@ -235,16 +253,17 @@ def vista_ventas(page):
     contenido_ventas = ft.Container(
         content=contenido_ventas,
         padding=30,
+        margin=ft.Margin(top=0, left=0, right=0, bottom=0),  
         width=800,
-        height=600,
+        height=400,  # altura reducida
         border_radius=16,
-        alignment=ft.alignment.center,
+        alignment=ft.alignment.top_center,
         blur=ft.Blur(sigma_x=15, sigma_y=15),
         border=ft.Border(
             left=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
             top=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
             right=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
-            bottom=ft.BorderSide(color=ft.colors.WHITE12, width=1.5),
+            bottom=ft.BorderSide(color=ft.colors.WHITE12, width=1.5)
         )
     )
 
@@ -275,20 +294,29 @@ def vista_ventas(page):
         "/ventas",
         [
             ft.Container(
-                content=ft.Column(
+                padding=30,  
+                content=ft.Row(
                     [
-                        ft.Row(
-                            [sidebar, ft.VerticalDivider(), contenido_ventas,ft.VerticalDivider(), encabezado,ft.VerticalDivider()],
+                        sidebar,
+                        ft.VerticalDivider(),
+                        ft.Column(
+                            [
+                                contenido_ventas,
+                                reloj_container
+                            ],
+                            spacing=20,
                             expand=True
-                        )
-                    ]
+                        ),
+                        ft.VerticalDivider(),
+                        encabezado
+                    ],
+                    expand=True
                 ),
                 expand=True,
                 alignment=ft.alignment.center,
                 image_src="https://i.ibb.co/B2rfDdMd/3312580.jpg",
                 image_fit=ft.ImageFit.COVER,
                 border_radius=16,
-                blur=ft.Blur(sigma_x=10, sigma_y=10)
             )
         ]
     )
