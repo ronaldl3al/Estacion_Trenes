@@ -96,7 +96,7 @@ def vista_ventas(page):
         label_style=ft.TextStyle(color="#F4F9FA", size=20),
         filled=True,
         border_color="#F4F9FA",
-        bgcolor=ft.colors.TRANSPARENT,
+        bgcolor="#1C0134",
         elevation=8,               
         width=300,
         height=50,
@@ -109,7 +109,7 @@ def vista_ventas(page):
         label_style=ft.TextStyle(color="#F4F9FA", size=20),
         filled=True,
         border_color="#F4F9FA",
-        bgcolor=ft.colors.TRANSPARENT,
+        bgcolor="#1C0134",
         width=300,
         height=50,
         border_radius=7,
@@ -212,14 +212,21 @@ def vista_ventas(page):
     cantidad_adultos.on_change = calcular_total
     cantidad_niños.on_change = calcular_total
     cantidad_adultos_mayores.on_change = calcular_total
+
+    texto_hora = ft.Text("00:00:00", size=48, weight=ft.FontWeight.BOLD)
+    texto_fecha = ft.Text("00/00/0000", size=24)
     reloj_container = ft.Container(
-        content=ft.Row(
-            [texto_hora, texto_fecha],
+        content=ft.Column(
+            [
+                texto_hora,
+                texto_fecha
+            ],
             alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10
         ),
         padding=30,
-        margin=ft.Margin(top=0, left=0, right=0, bottom=0),  
+        margin=ft.Margin(top=0, left=0, right=0, bottom=0),
         width=800,
         height=155,
         border_radius=16,
