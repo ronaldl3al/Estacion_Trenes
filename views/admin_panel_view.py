@@ -200,7 +200,7 @@ def vista_panel_admin(page):
         ], expand=True),
         padding=30,
         alignment=ft.alignment.center,
-        image_src="https://i.ibb.co/B2rfDdMd/3312580.jpg",
+        image_src="https://iili.io/3ncZ0gI.png",
         image_fit=ft.ImageFit.COVER,
         border_radius=16,
         blur=ft.Blur(sigma_x=15, sigma_y=15),

@@ -3,22 +3,19 @@ import models.estacion as modelo_estacion
 from utils.helpers import mostrar_mensaje
 
 def vista_login(page):
-    # Establecer el modo oscuro al iniciar
     page.theme_mode = ft.ThemeMode.DARK
 
     def validar_ingreso(e):
-        # Primero, verificar si las credenciales corresponden al admin
+        
         if (campo_usuario.value.lower() == modelo_estacion.admin_credentials["operador"].lower() and 
             campo_contrasena.value == modelo_estacion.admin_credentials["contrasena"]):
-            # Creamos un objeto simple para representar al admin
+        
             admin = type("Admin", (), {})()
             admin.operador = modelo_estacion.admin_credentials["operador"]
             admin.contrasena = modelo_estacion.admin_credentials["contrasena"]
             modelo_estacion.usuario_actual = admin
             page.go("/panel")
             return
-
-        # Verificar las credenciales de las estaciones (operadores)
         for est in modelo_estacion.estaciones:
             if campo_usuario.value == est.operador and campo_contrasena.value == est.contrasena:
                 modelo_estacion.usuario_actual = est 
@@ -136,10 +133,10 @@ def vista_login(page):
         ),
         expand=True,
         alignment=ft.alignment.center,
-        image_src="https://i.ibb.co/B2rfDdMd/3312580.jpg",
+        image_src="https://iili.io/3ncZ0gI.png",
         image_fit=ft.ImageFit.COVER,
         border_radius=16,
-        blur=ft.Blur(sigma_x=10, sigma_y=10),  
+        blur=ft.Blur(sigma_x=50, sigma_y=10),  
     )
 
     return ft.View(

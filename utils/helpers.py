@@ -29,5 +29,4 @@ def toggle_theme(page):
     page.update()
 
 def generar_archivo_ventas(estacion):
-    # Implementa la lógica para generar el archivo de ventas
     pass

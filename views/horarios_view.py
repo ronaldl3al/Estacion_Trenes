@@ -90,7 +90,7 @@ def vista_horarios(page):
     back_container = ft.Container(
         padding=ft.Padding(30, 30, 30, 30),
         alignment=ft.alignment.center,
-        image_src="https://i.ibb.co/B2rfDdMd/3312580.jpg",
+        image_src="https://iili.io/3ncZ0gI.png",
         image_fit=ft.ImageFit.COVER,
         border_radius=16,
         expand=True,
