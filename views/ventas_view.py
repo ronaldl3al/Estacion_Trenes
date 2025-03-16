@@ -316,27 +316,28 @@ def vista_ventas(page):
                 cantidad_adultos_mayores.value == ""
             ):
                 raise Exception("Complete todos los campos")
-            
+
             selected_train = next((t for t in estacion.trenes if t.nombre == dropdown_tren.value), None)
             if selected_train is None:
                 raise Exception("Seleccione un tren válido")
-            
+
             num_adultos = int(cantidad_adultos.value) if cantidad_adultos.value else 0
             num_niños = int(cantidad_niños.value) if cantidad_niños.value else 0
             num_adultos_mayores = int(cantidad_adultos_mayores.value) if cantidad_adultos_mayores.value else 0
-            
+
             total_boletos = num_adultos + num_niños + num_adultos_mayores
             if total_boletos == 0:
                 raise Exception("La cantidad de boletos no puede ser 0")
-            
+
             if total_boletos > selected_train.capacidad_disponible():
                 raise Exception("Capacidad insuficiente en el tren seleccionado")
-            
+
+            # Registrar la venta en el tren
             selected_train.vender_boletos(total_boletos)
             boletos_vendidos += total_boletos
             texto_boletos.value = f"Boletos vendidos: {boletos_vendidos}"
             texto_boletos.color = ft.colors.RED
-            
+
             estacion.ventas.append({
                 'destino': destino.value,
                 'horario': horario.value,
@@ -346,11 +347,23 @@ def vista_ventas(page):
                 'adultos_mayores': num_adultos_mayores,
                 'total_boletos': total_boletos
             })
-            
-     
+
+            # Limpiar los campos
+            destino.value = ""
+            horario.value = ""
+            dropdown_tren.value = ""
+            cantidad_adultos.value = "0"
+            cantidad_niños.value = "0"
+            cantidad_adultos_mayores.value = "0"
+            total.value = "Total: $0.00"
+
+            # Actualizar capacidad
             actualizar_capacidad(None)
+
+            # Mostrar mensaje de éxito
             mostrar_mensaje(page, f"{total_boletos} boleto(s) vendido(s) en {selected_train.nombre}!", tipo="success")
             page.update()
+
         except Exception as ex:
             mostrar_mensaje(page, f"Error: {str(ex)}", tipo="error")
             
